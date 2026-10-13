@@ -1,7 +1,6 @@
-# Aether1-CarbonPrice
 # AETHER 1: Live Institutional Carbon Pricer (Beta)
 
-A browser-based model that prices a carbon credit from first principles and reprices it instantly when you change any assumption. Built to show how project quality, policy status, market conditions and country risk combine into one defensible price.
+A browser-based model that prices a carbon credit from first principles and reprices it instantly when you change any assumption. Built to show how project quality, policy status, market conditions and country risk combine into one defensible price. It is designed as a transparent, independent estimate to sit alongside registry methodologies such as Verra and Gold Standard. It does not replace or certify against them.
 
 **[Open the live demo](YOUR-GITHUB-PAGES-LINK)** (no install, runs in the browser)
 
@@ -13,6 +12,54 @@ You describe a credit: its project type, vintage, methodology, verification, hos
 - **7 project types:** REDD+, ARR, CCUS, renewables, agricultural soil, cookstoves, DAC
 - **5 one-click scenarios:** Hormuz escalation, CBAM rollout, Article 6 collapse, INR crash, India carbon mandate
 - **Live market inputs:** Brent/WTI and USD/INR feed the energy and FX-volatility inputs when the data sources are reachable
+
+## Parameter Estimator tab
+
+Quality inputs such as additionality and leakage risk are usually guesses. The **Parameter Estimator** tab estimates them from the characteristics of a project, so the price rests on a stated rationale instead of a hand-set slider.
+
+### How to use it
+
+1. Open the **Parameter Estimator** tab.
+2. Enter the project's characteristics, starting with project type and location.
+3. Read the estimated parameters and the reasoning shown beside each one.
+4. Click **Apply** to load the estimates into the pricer.
+5. Switch to the pricer tab and adjust any parameter you disagree with. The price updates immediately.
+
+### How it delivers its estimates
+
+The estimator starts from the risk profile that is typical for the project type, then adjusts it for where the project sits. Each estimate comes with a reason, so you can accept it or override it with project evidence.
+
+| Project type | Typical risk profile | Reasoning |
+|---|---|---|
+| REDD+ (avoided deforestation) | Higher leakage, contested baseline | Pressure can move to neighbouring forest, and the "what would have happened" scenario is hard to prove |
+| ARR (afforestation / reforestation) | Moderate leakage, reversal risk | Land use can shift elsewhere, and trees can be lost to fire, drought or pests |
+| CCUS and DAC | Low leakage, strong additionality | The activity usually only happens if credit revenue pays for it, and storage is engineered |
+| Renewables | Low leakage, weaker additionality | Projects often proceed without credit revenue, which weakens the claim |
+| Cookstoves | Moderate leakage, usage uncertainty | Fuel demand can shift, and real usage is hard to measure |
+| Agricultural soil | Moderate leakage, higher permanence risk | Carbon stored in soil can be released by later changes in practice |
+
+**Location adjusts the result.** Climate risk is scored from the site's average temperature (T, in °C) and average precipitation (P) using a smooth curve, so there are no cliff edges when a figure crosses a threshold:
+
+```
+climateRisk = 50 + 25 * tanh((T - 30) / 8) - 20 * tanh((P - 2.5) / 1.5)
+```
+
+Hotter, drier sites score as riskier, which matters most for nature-based projects exposed to fire, drought and reversal.
+
+### Planned inputs
+
+These inputs are not built yet. Each would feed a specific parameter, so the estimates rest on more evidence.
+
+| Planned input | Parameter it would inform | Why it matters |
+|---|---|---|
+| Project size and duration | Delivery risk, permanence | Larger, longer projects face more delivery and reversal exposure |
+| Host country and region | Sovereign and policy risk, leakage | Governance and enforcement differ sharply by country |
+| Land-use or baseline history of the site | Baseline credibility, additionality | A documented history makes the "what would have happened" case testable |
+| Registry and methodology used | Baseline credibility, MRV | Methodologies differ in how conservatively they set baselines |
+| Monitoring frequency and who verifies | MRV | More frequent, independent checks lower measurement risk |
+| Community and ownership structure | Permanence, leakage | Secure land tenure and local benefit reduce reversal and displacement |
+| Permanence buffer and insurance | Permanence | A larger buffer or insurance cover lowers the cost of reversals |
+| Proximity to deforestation or leakage pressure | Leakage | Nearby pressure raises the chance activity just moves next door |
 
 ## How the price is built
 
@@ -49,9 +96,9 @@ The integrity score becomes a price multiplier, and the risk score becomes an ex
 - 10-year forward curve
 - Ranked sensitivity breakdown showing which factor moves the price most
 
-## How to use it
+## How to use the pricer
 
-1. Pick a project type and set its attributes.
+1. Pick a project type and set its attributes, or load them from the Parameter Estimator.
 2. Move any slider or change any dropdown. The price updates immediately.
 3. Toggle the policy gates to see what Article 6 or CBAM status is worth.
 4. Click a scenario to apply a shock, then compare against the baseline.
@@ -59,11 +106,9 @@ The integrity score becomes a price multiplier, and the risk score becomes an ex
 ## Limitations (please read)
 
 - **The weights are my judgment calls**, chosen to reflect how buyers and rating agencies discuss credit quality. They are not calibrated against transaction data. Change them and the price will change.
-- 1. The risk discount takes exponential form: Δ = exp(−λR)
-
-We chose an exponential rather than a linear discount because risk in carbon markets doesn't reduce price at a constant rate  it reduces the pool of willing buyers, and that pool shrinks faster as risk accumulates. A compliance buyer who tolerates moderate sovereign risk will not simply accept slightly less; above a threshold they exit the transaction entirely. The exponential captures this convexity: moving from a risk score of 20 to 40 costs less in price terms than moving from 60 to 80, because the latter crosses into territory where entire buyer categories: CORSIA operators, CBAM-exposed firms are disqualified. λ = 0.011 was set so that a fully maxed-out risk score of 100 produces a 67% discount, which is the approximate peak-to-trough price collapse observed in high-risk project categories during the 2022–23 VCM integrity crisis.
 - **Benchmark prices and country-risk inputs are static assumptions**, not live quotes. Only the Brent/WTI and USD/INR inputs are fetched live.
 - **The confidence interval is parametric**, derived from the risk and liquidity inputs. It is not a simulation.
+- **Estimator outputs are model-based suggestions.** They are not audited and not a verification of any real project. Use them as a starting point and override them with project evidence.
 - This is a beta for exploring how assumptions interact. It is not investment advice or a price quote.
 
 ## Tech
