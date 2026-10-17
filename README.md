@@ -2,7 +2,7 @@
 
 **Price a carbon credit from its fundamentals, not its headline.** AETHER 1 builds a fair value per tonne from production cost, project integrity, host-country risk, policy status and live market conditions. Every assumption is visible and adjustable, and the price updates the moment you change one.
 
-**[Open the live demo](YOUR-GITHUB-PAGES-LINK)** (runs in the browser, nothing to install)
+**[Open the live demo](https://hitarthd10.github.io/Aether1-CarbonPrice/)** (runs in the browser, nothing to install)
 
 ---
 
