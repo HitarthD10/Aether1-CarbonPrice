@@ -2,7 +2,7 @@
 
 A browser-based model that prices a carbon credit from first principles and reprices it instantly when you change any assumption. Built to show how project quality, policy status, market conditions and country risk combine into one defensible price. It is designed as a transparent, independent estimate to sit alongside registry methodologies such as Verra and Gold Standard. It does not replace or certify against them.
 
-**[Open the live demo](YOUR-GITHUB-PAGES-LINK)** (no install, runs in the browser)
+**[Open the live demo](https://hitarthd10.github.io/Aether1-CarbonPrice/)** (no install, runs in the browser)
 
 ## What it does
 
