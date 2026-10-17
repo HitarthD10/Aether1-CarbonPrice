@@ -1,71 +1,46 @@
 # AETHER 1: Live Institutional Carbon Pricer (Beta)
 
-A browser-based model that prices a carbon credit from first principles and reprices it instantly when you change any assumption. Built to show how project quality, policy status, market conditions and country risk combine into one defensible price. It is designed as a transparent, independent estimate to sit alongside registry methodologies such as Verra and Gold Standard. It does not replace or certify against them.
+**Price a carbon credit from its fundamentals, not its headline.** AETHER 1 builds a fair value per tonne from production cost, project integrity, host-country risk, policy status and live market conditions. Every assumption is visible and adjustable, and the price updates the moment you change one.
 
-**[Open the live demo](https://hitarthd10.github.io/Aether1-CarbonPrice/)** (no install, runs in the browser)
+**[Open the live demo](YOUR-GITHUB-PAGES-LINK)** (runs in the browser, nothing to install)
 
-## What it does
+---
 
-You describe a credit: its project type, vintage, methodology, verification, host country and contract terms. AETHER 1 returns a fair value per tonne, and every input stays adjustable, so a buyer can stress any assumption and see the price move in real time.
+## Why it exists
 
-- **36 adjustable inputs:** 22 sliders, 9 dropdowns and 5 on/off policy gates
-- **7 project types:** REDD+, ARR, CCUS, renewables, agricultural soil, cookstoves, DAC
-- **5 one-click scenarios:** Hormuz escalation, CBAM rollout, Article 6 collapse, INR crash, India carbon mandate
-- **Live market inputs:** Brent/WTI and USD/INR feed the energy and FX-volatility inputs when the data sources are reachable
+Voluntary carbon credits are priced opaquely. Two credits with the same headline price can differ enormously in quality: one may represent a real reduction in a stable jurisdiction, another may not. Independent research suggests only a minority of issued credits are real reductions, so a price that ignores quality, policy status and country risk is a poor basis for an institutional decision.
 
-## Parameter Estimator tab
+AETHER 1 prices the credit instead of quoting the market. It answers three questions:
 
-Quality inputs such as additionality and leakage risk are usually guesses. The **Parameter Estimator** tab estimates them from the characteristics of a project, so the price rests on a stated rationale instead of a hand-set slider.
+1. What does one credible tonne of this project type cost to produce?
+2. How much should integrity, risk and policy status move that price?
+3. How sure are we, and what is driving the answer?
 
-### How to use it
+## At a glance
 
-1. Open the **Parameter Estimator** tab.
-2. Enter the project's characteristics, starting with project type and location.
-3. Read the estimated parameters and the reasoning shown beside each one.
-4. Click **Apply** to load the estimates into the pricer.
-5. Switch to the pricer tab and adjust any parameter you disagree with. The price updates immediately.
+| | |
+|---|---|
+| **Project types** | 13, from REDD+ and ARR to biochar, CCUS and direct air capture |
+| **Adjustable inputs** | 36: 22 sliders, 9 dropdowns, 5 policy gates |
+| **Live data sources** | 14 free public feeds (FX, oil, governance, climate, geocoding, registry, rates, news, hazards) |
+| **Stress tests** | 5 one-click scenarios |
+| **Estimator** | Researches a project from its type and location and fills the whole pricer |
+| **Outputs** | Fair value, 90% interval, downside tail, 10-year path, ranked factor attribution |
+| **Transparency** | Every number is tagged LIVE, STALE or STATIC with its source and age |
 
-### How it delivers its estimates
+---
 
-The estimator starts from the risk profile that is typical for the project type, then adjusts it for where the project sits. Each estimate comes with a reason, so you can accept it or override it with project evidence.
-
-| Project type | Typical risk profile | Reasoning |
-|---|---|---|
-| REDD+ (avoided deforestation) | Higher leakage, contested baseline | Pressure can move to neighbouring forest, and the "what would have happened" scenario is hard to prove |
-| ARR (afforestation / reforestation) | Moderate leakage, reversal risk | Land use can shift elsewhere, and trees can be lost to fire, drought or pests |
-| CCUS and DAC | Low leakage, strong additionality | The activity usually only happens if credit revenue pays for it, and storage is engineered |
-| Renewables | Low leakage, weaker additionality | Projects often proceed without credit revenue, which weakens the claim |
-| Cookstoves | Moderate leakage, usage uncertainty | Fuel demand can shift, and real usage is hard to measure |
-| Agricultural soil | Moderate leakage, higher permanence risk | Carbon stored in soil can be released by later changes in practice |
-
-**Location adjusts the result.** Climate risk is scored from the site's average temperature (T, in °C) and average precipitation (P) using a smooth curve, so there are no cliff edges when a figure crosses a threshold:
+## How a price is built
 
 ```
-climateRisk = 50 + 25 * tanh((T - 30) / 8) - 20 * tanh((P - 2.5) / 1.5)
+Cost-based anchor  ->  vintage  ->  integrity  ->  risk  ->  market & structure  ->  policy gates  ->  fair value
 ```
 
-Hotter, drier sites score as riskier, which matters most for nature-based projects exposed to fire, drought and reversal.
+**1. Anchor: what a credible tonne costs.** The starting price is the levelised production cost of the project type plus a 15% developer margin, taken from published cost ranges. Published market averages are shown beside the result for comparison and never enter the price. Each anchor carries an evidence grade, and weaker grades widen the uncertainty band.
 
-### Planned inputs
+**2. Vintage.** Older credits trade at a discount. The discount is calculated from the credit's age on the valuation date, rising to about 23% inside the range observed in transaction data.
 
-These inputs are not built yet. Each would feed a specific parameter, so the estimates rest on more evidence.
-
-| Planned input | Parameter it would inform | Why it matters |
-|---|---|---|
-| Project size and duration | Delivery risk, permanence | Larger, longer projects face more delivery and reversal exposure |
-| Host country and region | Sovereign and policy risk, leakage | Governance and enforcement differ sharply by country |
-| Land-use or baseline history of the site | Baseline credibility, additionality | A documented history makes the "what would have happened" case testable |
-| Registry and methodology used | Baseline credibility, MRV | Methodologies differ in how conservatively they set baselines |
-| Monitoring frequency and who verifies | MRV | More frequent, independent checks lower measurement risk |
-| Community and ownership structure | Permanence, leakage | Secure land tenure and local benefit reduce reversal and displacement |
-| Permanence buffer and insurance | Permanence | A larger buffer or insurance cover lowers the cost of reversals |
-| Proximity to deforestation or leakage pressure | Leakage | Nearby pressure raises the chance activity just moves next door |
-
-## How the price is built
-
-The model starts from a benchmark price for the project type, then applies adjustments for vintage, integrity, country risk, market conditions and policy status.
-
-**Integrity score (6 weighted factors)**
+**3. Integrity score (six weighted factors).** Quality becomes a price multiplier through a bounded, centred curve, so a poor credit is discounted and an excellent one earns a premium.
 
 | Factor | Weight |
 |---|---|
@@ -76,40 +51,125 @@ The model starts from a benchmark price for the project type, then applies adjus
 | Leakage | 10% |
 | Double-counting risk | 8% |
 
-**Risk score (5 weighted factors)**
+Methodology, verification frequency and auditor quality can only help or hurt in the right direction: a better auditor never lowers the price.
+
+**4. Risk score (four weighted factors).** Risk becomes an exponential discount, because risk compounds: each added unit of risk removes buyers faster than a straight line would suggest.
 
 | Factor | Weight |
 |---|---|
 | Sovereign | 32% |
-| Policy | 22% |
-| FX | 20% |
+| Policy stability | 22% |
+| FX volatility | 20% |
 | Delivery | 18% |
-| Energy | 8% |
 
-The integrity score becomes a price multiplier, and the risk score becomes an exponential discount. Further adjustments cover liquidity, buyer type, co-benefits, contract terms, an emerging-market governance discount, and five policy gates: Article 6 status, corresponding adjustment, host-country authorization, export eligibility and CBAM recognition.
+Energy prices act through one channel only, a direct effect on compliance-linked carbon, so they are never counted twice.
 
-## Outputs
+**5. Market and structure.** Liquidity, compliance-market linkage (CORSIA, EU ETS), buyer type, contract structure and banking optionality each adjust the price within bounded ranges. Co-benefits and registry carry only small capped effects, because transaction data shows little pricing power for them.
 
-- Fair value per tonne
-- 90% confidence interval
-- Tail-risk (CVaR) estimate
-- 10-year forward curve
-- Ranked sensitivity breakdown showing which factor moves the price most
+**6. Policy gates.** Article 6 status, corresponding adjustment, host-country authorization, export eligibility and CBAM recognition work as on/off gates. A missing authorization does not shave a few percent off a credit. It removes whole buyer pools, so each gate applies as a multiplier.
 
-## How to use the pricer
+---
 
-1. Pick a project type and set its attributes, or load them from the Parameter Estimator.
-2. Move any slider or change any dropdown. The price updates immediately.
-3. Toggle the policy gates to see what Article 6 or CBAM status is worth.
-4. Click a scenario to apply a shock, then compare against the baseline.
+## The Parameter Estimator: from a project to a price in one pass
+
+Most people don't know a project's leakage risk or baseline credibility. The estimator researches the project from what you do know, shows its reasoning, and loads the result into the pricer.
+
+### Step by step
+
+1. **Open the Parameter Estimator tab.**
+2. **Choose a project type and a host country.** These are the only required inputs. Type the project's GPS coordinates instead and the country fills in automatically.
+3. **Add anything else you know**, such as hectares, vintage, developer, methodology, verification frequency, auditor, registry, and the legal status of Article 6, corresponding adjustment, authorization and CBAM. Anything left blank is estimated from the type and the country.
+4. **Optional: enter a Verra project ID and click FETCH.** The tool looks the project up in Verra's public registry and fills in the name, country and status. It sets the project type from the registry's category, and uses the record's annual emission reductions as the crediting volume when the record has one. Verra IDs only.
+5. **Click Research Project & Estimate All Parameters.** The tool resolves the location, pulls climate data for the coordinates, infers the biome, estimates the crediting volume and derives every parameter. Each estimate appears with a plain-language rationale.
+6. **Click Apply to Pricing Engine.** The tool switches to the pricer, sets every slider, dropdown and gate to the estimated values, and reprices instantly.
+7. **Adjust anything you disagree with.** Your judgement overrides the estimate and the price moves immediately.
+
+### How the estimates are produced
+
+Each parameter starts from an evidence-based score for the project type, then adjusts for place.
+
+- **Additionality** starts from the share of credits that independent research found to be real reductions for that type (for example, about 11% for cookstoves and 25% for avoided deforestation). Types without rigorous evidence use a clearly marked analyst judgement. A high-pressure deforestation setting does not raise the score, because inflated baselines are a known cause of over-crediting. An optional ICVCM Core Carbon Principles label adds a small, capped uplift.
+- **Permanence** responds to the biome and to a climate-reversal score built from the site's temperature and rainfall:
+
+```
+climateRisk = 50 + 25 * tanh((T - 30) / 8) - 20 * tanh((P - 2.5) / 1.5)
+```
+
+T is the average daily maximum temperature (°C) and P the average daily precipitation (mm), from climate-model data for the coordinates. The curve is smooth, so a small change in either input never causes a jump in risk.
+- **Leakage** blends geographic pressure and market-specific displacement risk.
+- **Sovereign risk, policy stability and governance** come from World Bank governance indicators for the host country.
+- **FX volatility** is the 30-day realised volatility of the host currency.
+- **Liquidity and scale** follow from the crediting volume.
+
+---
+
+## Live data and a world-events layer
+
+The tool reprices on its own as conditions change. Prices refresh every minute and the news layer every ten minutes.
+
+| Layer | Sources |
+|---|---|
+| FX, oil, rates | Public market-data feeds with fallback chains; US Treasury rate for the forward curve |
+| Country risk and macro | World Bank governance, inflation and growth indicators |
+| Project environment | Open-Meteo climate data; OpenStreetMap geocoding; Verra public registry |
+| News | GDELT and Google News, searched for carbon policy, energy chokepoints, macro stress and politics |
+| Hazards | NASA EONET and USGS earthquake feeds, matched to the project's coordinates |
+
+**News overlay.** Headlines are classified by transparent rules (energy chokepoints, carbon policy, integrity scandals, macro stress, political instability, demand deals, and wildfire, flood and earthquake hazards). Each event moves only the factors it affects, with its effect limited in four ways:
+
+- It **saturates** by the number of independent sources, so one story repeated a hundred times does not count a hundred times.
+- It **decays** with a half-life.
+- Every factor has a **cap**.
+- Hazards act only within a set radius of the project.
+
+An **audit table** shows each event, the factor it moved and the effect on price. Individual events can be switched off, and the whole overlay can be turned off to see the baseline price.
+
+**Freshness is never hidden.** Every number carries a LIVE, STALE or STATIC tag with its source and age. Values with no free live source sit in one dated STATIC block, and old ones are flagged for review. A **valuation date** controls all age-based calculations, so you can price as of today or backdate to a past day.
+
+---
+
+## Uncertainty and scenarios
+
+- **Interval.** Prices are modelled as lognormal, so the 90% interval is always positive and asymmetric. The width grows with risk, illiquidity, weak verification, weak cost evidence and the age of static inputs.
+- **Downside tail.** The tool reports a 2.5% downside value for stress planning.
+- **10-year path.** An illustrative drift-and-jump scenario path, not a forecast.
+- **Factor attribution.** A ranked, one-at-a-time breakdown shows which input moves this price the most. The effects are not additive.
+- **Scenarios.** One click applies Hormuz escalation, CBAM full rollout, Article 6 collapse, an INR crash or an India carbon mandate on top of live conditions.
+
+---
+
+## Quick start
+
+1. Open the **Parameter Estimator**, pick a project type and country, and run the estimate.
+2. Click **Apply to Pricing Engine** and read the fair value, interval and attribution.
+3. Move any slider to test an assumption, for example sovereign risk or additionality.
+4. Toggle the **policy gates** to see what Article 6 or CBAM status is worth.
+5. Click a **scenario** to stress the price, then compare with the baseline.
+6. Open the **world-events panel** to see which news is moving the price, and switch events off to test your own view.
+
+---
+
+## Where each choice comes from
+
+| Design choice | Evidence |
+|---|---|
+| Additionality has the largest weight; scores by project type | Meta-study of 2,346 crediting projects (Probst et al., Nature Communications, 2024) |
+| Host-country governance drives the emerging-market gap | Transaction-level study of about 260,000 retirements (WFE Working Paper No. 11, 2025) |
+| Vintage discount range; weak pricing power for co-benefits and registry | Same study |
+| Integrity premium sized against published rating spreads | Public rating-agency price studies |
+| Cost-based anchors | Published levelised-cost literature, graded by evidence quality |
+
+---
 
 ## Limitations (please read)
 
-- **The weights are my judgment calls**, chosen to reflect how buyers and rating agencies discuss credit quality. They are not calibrated against transaction data. Change them and the price will change.
-- **Benchmark prices and country-risk inputs are static assumptions**, not live quotes. Only the Brent/WTI and USD/INR inputs are fetched live.
-- **The confidence interval is parametric**, derived from the risk and liquidity inputs. It is not a simulation.
-- **Estimator outputs are model-based suggestions.** They are not audited and not a verification of any real project. Use them as a starting point and override them with project evidence.
-- This is a beta for exploring how assumptions interact. It is not investment advice or a price quote.
+- **The weights are my judgement calls.** They reflect how buyers and rating agencies discuss quality, and they have not been calibrated against transaction data. Change them and the price changes.
+- **Some inputs are static.** Cost anchors, benchmark prices, governance priors for missing data and the emerging-market gap carry a source and a date, and are not live.
+- **Scores for types without strong studies are analyst judgement** and are marked as such.
+- **The news overlay is rule-based.** It reflects headlines and keyword rules, and it is capped on purpose. It does not predict prices.
+- **The forward path is illustrative**, not a forecast.
+- **Estimates are model-based suggestions.** They are not an audit or a verification of any real project, and the tool is not investment advice or a price quote.
+- Free data feeds can fail or be rate-limited. When one does, the tool keeps the last value and tags it STALE.
 
 ## Tech
 
